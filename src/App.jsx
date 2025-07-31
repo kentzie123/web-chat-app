@@ -1,27 +1,37 @@
-import './App.css'
-import { Routes, Route } from 'react-router-dom';
+import './App.css';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Components
-import Navbar from './components/navbar/NavBar';
+import Topnav from './components/Topnav';
 
 // Pages
 import HomePage from './pages/HomaPage';
-import SignUpPage from './pages/SignUpPage'
+import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 
-function App() {
+// Store
+import { useAuthStore } from './store/useAuthStore';
+
+// Toast
+import { Toaster } from 'react-hot-toast';
+
+function App() {  
+  const { authUser } = useAuthStore();
+
+  
 
   return (
-    <div className=''>
-      <Navbar/>
+    <div data-theme={'dracula'} className='flex flex-col min-h-screen'>
+      <Toaster />
+      <Topnav />
       <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/login' element={<LoginPage />} />
+        <Route path='/' element={ authUser ? <HomePage /> : <Navigate to={'/login'} />} />
+        <Route path='/signup' element={ !authUser ? <SignUpPage /> : <HomePage /> } />
+        <Route path='/login' element={ !authUser ? <LoginPage />: <HomePage /> } />
         <Route path='/settings' element={<SettingsPage />} />
-        <Route path='/profile' element={<ProfilePage />} />
+        <Route path='/profile' element={ authUser ? <ProfilePage /> : <Navigate to={'/login'} /> } />
       </Routes>
     </div>
   )
