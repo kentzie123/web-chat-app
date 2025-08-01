@@ -1,11 +1,12 @@
-import './App.css';
+// For routing
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Components
-import Topnav from './components/Topnav';
+import Topnav from './components/layout/Topnav'
+import Loading from './components/ui/Loading';
 
 // Pages
-import HomePage from './pages/HomaPage';
+import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import SettingsPage from './pages/SettingsPage';
@@ -13,17 +14,27 @@ import ProfilePage from './pages/ProfilePage';
 
 // Store
 import { useAuthStore } from './store/useAuthStore';
+import { useThemeStore } from './store/useThemeStore';
 
 // Toast
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 function App() {  
-  const { authUser } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
+  useEffect(()=>{
+    checkAuth();
+  },[])
+
+  if(isCheckingAuth && !authUser){
+    return (<Loading />)
+  }
   
 
   return (
-    <div data-theme={'dracula'} className='flex flex-col min-h-screen'>
+    <div data-theme={theme} className='flex flex-col min-h-screen'>
       <Toaster />
       <Topnav />
       <Routes>
