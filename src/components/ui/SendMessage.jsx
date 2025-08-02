@@ -2,7 +2,7 @@
 import { Send, Image, X } from "lucide-react";
 
 // Hooks
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 // Store
 import { useChatStore } from "../../store/useChatStore";
@@ -12,16 +12,16 @@ import toast from "react-hot-toast";
 
 const SendMessage = () => {
   const selectPic = useRef();
-  const { sendMessage, selectedUser } = useChatStore();
-  const [message, setMessage] = useState({
-    text: "",
-    image: null,
-  });
+  const { sendMessage, selectedUser, message, setMessage } = useChatStore();
+
 
   const handleSelectImage = (imageFile) => {
+    console.log(imageFile);
     const supportedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
     if(!supportedTypes.includes(imageFile.type)){
+      console.log('image not supported');
+      
       toast.error("File type not supported!");
       return;
     }
@@ -34,10 +34,10 @@ const SendMessage = () => {
     const reader = new FileReader(); // Create a file reader
     // This will run once the file is fully read
     reader.onloadend = () => {
-      setMessage((prev) => ({
-        ...prev,
+      setMessage({
+        ...message,
         image: reader.result, // `reader.result` contains the base64 image
-      }));
+      });
     };
 
     // Start reading the image file (this triggers onloadend later)
@@ -50,7 +50,11 @@ const SendMessage = () => {
     e.preventDefault();
     sendMessage(message, selectedUser.id);
 
+    // For clearing
     setMessage({ text: "", image: null });
+    if (selectPic.current) {
+      selectPic.current.value = "";
+    }
   };
 
   const closeImagePreview = () => {

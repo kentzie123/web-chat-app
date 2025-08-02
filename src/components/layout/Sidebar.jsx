@@ -3,6 +3,7 @@ import { Users  } from 'lucide-react';
 
 // Store
 import { useChatStore } from '../../store/useChatStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 // Hookes
 import { useEffect } from 'react';
@@ -11,7 +12,8 @@ import { useEffect } from 'react';
 import SidebarSkeleton from './skeleton/SidebarSkeleton';
 
 const Sidebar = () => {
-    const { getUsers, users, isUsersLoading, getMessagesFromTo, isMessagesLoading, selectedUser } = useChatStore();
+    const { getUsers, users, isUsersLoading, getMessagesFromTo, selectedUser } = useChatStore();
+    const { onlineUsers } = useAuthStore();
 
     useEffect(()=>{
         getUsers();
@@ -31,7 +33,7 @@ const Sidebar = () => {
                 </div>
                 <div className='flex items-center mt-3 gap-2'>
                     <input type="checkbox" className="checkbox checkbox-sm"/>
-                    <div className='text-sm'>Show online only <span className='text-[10px] text-base-content/60'>(0 online)</span></div>
+                    <div className='text-sm'>Show online only <span className='text-[10px] text-base-content/60'>({onlineUsers?.length - 1})</span></div>
                 </div>
             </div>
 

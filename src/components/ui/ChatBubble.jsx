@@ -1,13 +1,9 @@
 // Time formatter
 import { formatTo12Hour } from "../../lib/timeFormat";
 
-const ChatBubble = ({ message, user }) => {
+const ChatBubble = ({ message, user, isMine }) => {
   return (
-    <div
-      className={`chat ${
-        message.senderId === user.id ? "chat-end" : "chat-start"
-      } `}
-    >
+    <div className={`chat ${isMine ? "chat-end" : "chat-start"} `}>
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
           <img
@@ -29,9 +25,8 @@ const ChatBubble = ({ message, user }) => {
             className="sm:max-w-[200px] rounded-md mb-2"
           />
         )}
-        {message.text && <p>{message.text}</p>}
+        {message.text && <p className="break-words">{message.text}</p>}
       </div>
-      <div className="text-[10px]">Delivered</div>
     </div>
   );
 };

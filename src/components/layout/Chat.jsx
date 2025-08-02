@@ -10,9 +10,21 @@ import ChatBubble from "../ui/ChatBubble";
 import SendMessage from "../ui/SendMessage";
 import ChatSkeleton from "./skeleton/ChatSkeleton";
 
+// Hooks 
+import { useEffect, useRef } from "react";
+
+
 const Chat = () => {
   const { selectedUser, selectedUserMessages, closeChat } = useChatStore();
   const { authUser } = useAuthStore();
+
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [selectedUserMessages]);
 
 
   if(!selectedUser){
@@ -27,7 +39,7 @@ const Chat = () => {
           <div className="flex items-center gap-3">
             <img
               className="size-10 rounded-full"
-              src={selectedUser.profile_pic}
+              src={selectedUser.profile_pic ? selectedUser.profile_pic : "/default.png"}
               alt="profile"
             />
             <div>
@@ -44,13 +56,14 @@ const Chat = () => {
       {/* Messages container with scroll */}
       <div className="flex-1 p-3 space-y-5 overflow-y-auto">
         {selectedUserMessages.map((message, i) => (
-          <div key={i} className="w-full">
             <ChatBubble
+              key={i}
               message={message}
-              user={message.senderId === authUser.id ? authUser : selectedUser}
+              user={message.sender_id === authUser.id ? authUser : selectedUser}
+              isMine={message.sender_id === authUser.id}
             />
-          </div>
         ))}
+        <div ref={bottomRef}></div>
       </div>
 
       {/* Input */}
