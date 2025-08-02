@@ -60,7 +60,7 @@ const SettingsPage = () => {
               </div>
               
               <div className="flex items-center gap-2 p-4">
-                <input value={'Type your message...'} type="text" placeholder="Type here" className="input flex-grow" />
+                <input value={'Type your message...'} readOnly type="text" placeholder="Type here" className="input flex-grow" />
                 <button type="button" className="btn btn-primary">
                   <Send/>
                 </button>
