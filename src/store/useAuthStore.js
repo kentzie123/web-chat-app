@@ -6,9 +6,6 @@ import io from "socket.io-client";
 // Toast
 import toast from "react-hot-toast";
 
-// Store
-import { useChatStore } from "./useChatStore";
-
 const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
 
@@ -20,7 +17,9 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
 
+
   connectSocket: () => {
+      console.log("connectSocket() called");
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
@@ -29,20 +28,18 @@ export const useAuthStore = create((set, get) => ({
         userId: authUser.id,
       },
     });
-    socket.connect();
 
-    set({ socket: socket });
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.connected);
+      set({ socket });
+    });
 
-    const getOnlineUsers = (userIds) => {
-      console.log(userIds);
-      
+    socket.on("getOnlineUsers", (userIds) => {
+      console.log("Online users:", userIds);
       set({ onlineUsers: userIds });
-    }
-    
-    socket.on("getOnlineUsers", getOnlineUsers);
-
-    // socket.off('getOnlineUsers', getOnlineUsers);
+    });
   },
+
   disconnectSocket: () => {
     if (get().socket?.connected) get().socket.disconnect();
   },
@@ -51,8 +48,8 @@ export const useAuthStore = create((set, get) => ({
     try {
       set({ isLoggingIn: true });
       const res = await api.post("/auth/login", data);
-      get().connectSocket();
       set({ authUser: res.data.data });
+      get().connectSocket();
       toast.success("Logged in successfully");
     } catch (err) {
       toast.error(err.response.data.message);
@@ -65,8 +62,8 @@ export const useAuthStore = create((set, get) => ({
     try {
       set({ isCheckingAuth: true });
       const res = await api.get("/auth/check");
-      get().connectSocket();
       set({ authUser: res.data.data });
+      get().connectSocket();
     } catch (err) {
       console.log("Error in checkAuth:", err);
       set({ authUser: null });
@@ -79,8 +76,8 @@ export const useAuthStore = create((set, get) => ({
     try {
       set({ isSigningUp: true });
       const res = await api.post("/auth/signup", data);
-      get().connectSocket();
       set({ authUser: res.data.data });
+      get().connectSocket();
       toast.success("Account created successfully");
     } catch (error) {
       toast.error(error.response.data.message);

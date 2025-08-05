@@ -1,9 +1,9 @@
 // Time formatter
-import { formatTo12Hour } from "../../lib/timeFormat";
+import { formatChatTimestamp } from "../../lib/timeFormat";
 
-const ChatBubble = ({ message, user, isMine }) => {
+const ChatBubble = ({ message, user, isMine, ref }) => {
   return (
-    <div className={`chat ${isMine ? "chat-end" : "chat-start"} `}>
+    <div ref={ref} className={`chat ${isMine ? "chat-end" : "chat-start"} `}>
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
           <img
@@ -14,7 +14,7 @@ const ChatBubble = ({ message, user, isMine }) => {
       </div>
       <div className="ps-2 pb-1 chat-header">
         <time className="text-xs opacity-50">
-          {formatTo12Hour(message.created_at)}
+          {formatChatTimestamp(message.created_at)}
         </time>
       </div>
       <div className="chat-bubble">

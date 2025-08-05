@@ -13,7 +13,7 @@ import ChatSkeleton from "./skeleton/ChatSkeleton";
 // Hooks
 import { useEffect, useRef } from "react";
 
-const Chat = () => {
+const ChatMobile = () => {
   const {
     selectedUser,
     selectedUserMessages,
@@ -121,4 +121,4 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default ChatMobile;
