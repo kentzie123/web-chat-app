@@ -21,6 +21,14 @@ export const useChatStore = create((set, get) => ({
 
   closeChat: () => set({ selectedUser: null, selectedUserMessages: [] }),
 
+  handleNewMessageListener: (socket) => {
+    console.log('Socket on new_message');
+    
+    socket.on('new_message', (newMessage) => {
+      get().addMessageToChat(newMessage);
+    })
+  },
+
   handleScrollEvent: async (container) => {
 
     if (!container) return;
@@ -35,8 +43,9 @@ export const useChatStore = create((set, get) => ({
       }
   },
 
-  addMessageToChat: (message) => {
-    set({ selectedUserMessages: [...get().selectedUserMessages, message] });
+  addMessageToChat: (newMessage) => {
+    if(!get().selectedUser) return; // prevention for unnecessary adding new message to chat array
+    set({ selectedUserMessages: [...get().selectedUserMessages, newMessage] });
   },
 
 
@@ -45,8 +54,7 @@ export const useChatStore = create((set, get) => ({
       set({ isSendingMessage: true });
       const res = await api.post(`/messages/${receiver_id}`, message);
       set({ latestMessage: res.data.data });
-      const prevMessages = get().selectedUserMessages;
-      set({ selectedUserMessages: [...prevMessages, res.data.data] });
+      get().addMessageToChat(res.data.data);
       console.log("Sent message successfully!", res.data.data);
     } catch (error) {
       console.log(error);

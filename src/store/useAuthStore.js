@@ -3,11 +3,14 @@ import api from "../lib/axios";
 
 import io from "socket.io-client";
 
+// Store
+import { useChatStore } from "./useChatStore";
+
 // Toast
 import toast from "react-hot-toast";
 
 const BASE_URL =
-  import.meta.env.MODE === "development" ? "http://localhost:5000" : "/";
+  import.meta.env.MODE === "development" ? "http://192.168.1.5:5000" : "/"; // Change http://192.168.1.5:5000 to http://localhost:5000 if running the server locally
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -17,9 +20,8 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
 
-
   connectSocket: () => {
-      console.log("connectSocket() called");
+    console.log("connectSocket() called");
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
@@ -27,6 +29,7 @@ export const useAuthStore = create((set, get) => ({
       query: {
         userId: authUser.id,
       },
+      withCredentials: true,
     });
 
     socket.on("connect", () => {
@@ -34,10 +37,14 @@ export const useAuthStore = create((set, get) => ({
       set({ socket });
     });
 
+    // Get online users listener
     socket.on("getOnlineUsers", (userIds) => {
       console.log("Online users:", userIds);
       set({ onlineUsers: userIds });
     });
+
+    // New message listeners
+    useChatStore.getState().handleNewMessageListener(socket);
   },
 
   disconnectSocket: () => {

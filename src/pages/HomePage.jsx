@@ -2,6 +2,7 @@
 import Sidebar from '../components/layout/Sidebar';
 import ChatNoContent from '../components/layout/ChatNoContent';
 import Chat from '../components/layout/Chat';
+import ChatMobile from '../components/layout/ChatMobile';
 
 //Store
 import { useChatStore } from '../store/useChatStore';
@@ -11,6 +12,11 @@ const HomePage = () => {
 
   return (
     <div className='flex-1 grid grid-cols-12 bg-base-200 px-3 py-3 sm:px-10 lg:px-15 gap-3'>
+      {selectedUser && (
+        <div className="fixed top-17 inset-0 z-50 md:hidden mx-3 my-3 sm:mx-10">
+          <ChatMobile />
+        </div>
+      )}
       <div className='col-span-12 md:col-span-4'>
         <Sidebar />
       </div>

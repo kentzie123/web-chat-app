@@ -21,13 +21,12 @@ const Chat = () => {
     addMessageToChat,
     setLatestMessage,
     latestMessage,
-    handleScrollEvent
+    handleScrollEvent,
   } = useChatStore();
-  const { authUser, socket } = useAuthStore();
+  const { authUser, socket, onlineUsers } = useAuthStore();
 
   const messageContainerRef = useRef();
   const bottomRef = useRef(null);
-
 
   // Scroll bottom
   useEffect(() => {
@@ -44,27 +43,6 @@ const Chat = () => {
     setLatestMessage(null);
   }, [latestMessage, selectedUserMessages]);
 
-
-  useEffect(() => {
-    if (!selectedUser || !socket?.connected) return;
-    const handleAddNewMessageToChat = (newMessage) => {
-      console.log();
-
-      if (newMessage.sender_id === selectedUser.id) {
-        console.log("New message:", newMessage);
-        addMessageToChat(newMessage);
-        setLatestMessage(newMessage);
-      } else {
-        console.log("There is new message sent to you!");
-      }
-    };
-
-    socket.on("new_message", handleAddNewMessageToChat);
-
-    return () => {
-      socket.off("new_message", handleAddNewMessageToChat);
-    };
-  }, [selectedUser, socket]);
 
   if (!selectedUser) {
     <ChatSkeleton />;
@@ -87,7 +65,9 @@ const Chat = () => {
             />
             <div>
               <div className="font-medium">{selectedUser.fullname}</div>
-              <div className="text-base-content/60 text-sm">Offline</div>
+              <div className="text-base-content/60 text-sm">
+                {onlineUsers.includes(selectedUser.id) ? "Online" : "Offline"}
+              </div>
             </div>
           </div>
           <button onClick={closeChat} className="btn btn-sm btn-ghost">
@@ -99,7 +79,7 @@ const Chat = () => {
       {/* Messages container with scroll */}
       <div
         ref={messageContainerRef}
-        onScroll={()=> handleScrollEvent(messageContainerRef.current)}
+        onScroll={() => handleScrollEvent(messageContainerRef.current)}
         className="flex-1 p-3 space-y-5 overflow-y-auto"
       >
         {selectedUserMessages.map((message, i) => (

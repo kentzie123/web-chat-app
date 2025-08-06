@@ -18,7 +18,6 @@ import ProfilePage from "./pages/ProfilePage";
 // Store
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
-import { useChatStore } from "./store/useChatStore";
 
 // Toast
 import { Toaster } from "react-hot-toast";
@@ -26,8 +25,6 @@ import { useEffect } from "react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-
-  const { selectedUser } = useChatStore();
 
   const { theme } = useThemeStore();
 
@@ -45,29 +42,12 @@ function App() {
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
       <Toaster />
       <Topnav />
-      {selectedUser && (
-        <div className="fixed top-17 inset-0 z-50 md:hidden mx-3 my-3 sm:mx-10">
-          <ChatMobile />
-        </div>
-      )}
       <Routes>
-        <Route
-          path="/"
-          element={authUser ? <HomePage /> : <Navigate to={"/login"} />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <HomePage />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <HomePage />}
-        />
+        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route
-          path="/profile"
-          element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />}
-        />
+        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
       </Routes>
     </div>
   );

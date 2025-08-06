@@ -26,7 +26,7 @@ const LoginPage = () => {
   return (
     <div className='bg-base-200 flex-1 flex items-center justify-center'>
 
-      <form onSubmit={handleSubmit} className='bg-base-300 rounded-lg p-6 space-y-8 sm:w-screen md:w-[380px]'>
+      <form onSubmit={handleSubmit} className='bg-base-300 rounded-lg p-6 space-y-8 md:w-[380px]'>
         <div className='flex items-center flex-col'>
           <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
             <MessageSquare className="size-6 text-primary" />
