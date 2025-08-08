@@ -9,8 +9,6 @@ import { useChatStore } from "./useChatStore";
 // Toast
 import toast from "react-hot-toast";
 
-const BASE_URL =
-  import.meta.env.MODE === "development" ? "http://192.168.1.5:5000" : "/"; // Change http://192.168.1.5:5000 to http://localhost:5000 if running the server locally
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -25,7 +23,7 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(import.meta.env.VITE_API_UR, {
       query: {
         userId: authUser.id,
       },
