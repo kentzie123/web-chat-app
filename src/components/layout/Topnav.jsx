@@ -28,7 +28,7 @@ const Topnav = () => {
             <div className="bg-primary/10 p-2 rounded-md">
               <MessageSquare className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-lg font-bold">Chatapp</h1>
+            <h1 className="text-lg font-bold">Chattrixx</h1>
           </div>
         </Link>
 
