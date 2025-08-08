@@ -6,7 +6,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 // Components
 import Topnav from "./components/layout/Topnav";
 import Loading from "./components/ui/Loading";
-import ChatMobile from "./components/layout/ChatMobile";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -14,6 +13,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import VideoCallPage from "./pages/VideoCallPage";
 
 // Store
 import { useAuthStore } from "./store/useAuthStore";
@@ -48,6 +48,7 @@ function App() {
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route path="/video-call" element={authUser ? <VideoCallPage /> : <Navigate to="/login" />}/>
       </Routes>
     </div>
   );

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import api from "../lib/axios";
+const audio = new Audio("/messageNotif.mp3"); 
 
 export const useChatStore = create((set, get) => ({
   users: [],
@@ -15,6 +16,10 @@ export const useChatStore = create((set, get) => ({
   isLoadingMoreMessage: false,
   latestMessage: null,
 
+  playMusic: () => {
+    audio.play();
+  },
+
   setLatestMessage: (latestMessage) => set({ latestMessage }),
 
   setMessage: (message) => set({ message }),
@@ -22,40 +27,51 @@ export const useChatStore = create((set, get) => ({
   closeChat: () => set({ selectedUser: null, selectedUserMessages: [] }),
 
   handleNewMessageListener: (socket) => {
-    console.log('Socket on new_message');
-    
-    socket.on('new_message', (newMessage) => {
+    console.log("Socket on new_message");
+
+    socket.on("new_message", (newMessage) => {
       get().addMessageToChat(newMessage);
-    })
+      get().playMusic()
+    });
   },
 
   handleScrollEvent: async (container) => {
-
     if (!container) return;
 
     if (container.scrollTop === 0) {
-        const prevScrollHeight = container.scrollHeight;
+      const prevScrollHeight = container.scrollHeight;
 
-        await get().getMoreMessages(); // assume this prepends messages to your list
+      await get().getMoreMessages(); // assume this prepends messages to your list
 
-        const newScrollHeight = container.scrollHeight;
-        container.scrollTop = newScrollHeight - prevScrollHeight;
-      }
+      const newScrollHeight = container.scrollHeight;
+      container.scrollTop = newScrollHeight - prevScrollHeight;
+    }
   },
 
   addMessageToChat: (newMessage) => {
-    if(!get().selectedUser) return; // prevention for unnecessary adding new message to chat array
+    if (!get().selectedUser) return; // prevention for unnecessary adding new message to chat array
     set({ selectedUserMessages: [...get().selectedUserMessages, newMessage] });
   },
 
-
-  sendMessage: async (message, receiver_id) => {
+  sendMessage: async (message, receiver_id, sender_id) => {
     try {
-      set({ isSendingMessage: true });
+      set({ isSendingMessage: true }); // Not used
+      const tempId = Date.now();
+      const tempMessage = {
+        ...message,
+        receiver_id,
+        sender_id,
+        isSending: true,
+        created_at: new Date(),
+        tempId,
+      };
+      get().addMessageToChat(tempMessage);
+      set({ latestMessage: tempMessage });
       const res = await api.post(`/messages/${receiver_id}`, message);
-      set({ latestMessage: res.data.data });
-      get().addMessageToChat(res.data.data);
-      console.log("Sent message successfully!", res.data.data);
+      const updatedMessages = get().selectedUserMessages.map((msg) =>
+        msg.tempId === tempId ? res.data.data : msg
+      );
+      set({ selectedUserMessages: updatedMessages });
     } catch (error) {
       console.log(error);
     } finally {
@@ -77,13 +93,13 @@ export const useChatStore = create((set, get) => ({
 
   getMessagesFromTo: async (receiverInfo) => {
     try {
-      if(get().selectedUser?.id === receiverInfo.id) return;
+      if (get().selectedUser?.id === receiverInfo.id) return;
       set({ isMessagesLoading: true });
       const res = await api.get(`/messages/get/${receiverInfo.id}`);
       set({ selectedUserMessages: res.data.data.reverse() });
       set({ selectedUser: receiverInfo });
       set({ latestMessage: res.data.data[res.data.data.length - 1] });
-      console.log('Data added to latest message:', res.data.data[0]);
+      console.log("Data added to latest message:", res.data.data[0]);
       console.log("Selected user:", receiverInfo);
     } catch (error) {
       console.log(error);
@@ -94,14 +110,22 @@ export const useChatStore = create((set, get) => ({
 
   getMoreMessages: async () => {
     try {
-      if(get().selectedUserMessages.length === 0) return;
+      if (get().selectedUserMessages.length === 0) return;
 
       set({ isLoadingMoreMessage: true });
-      const res = await api.get(`/messages/loadMore?receiver_id=${get().selectedUser.id}&oldestDate=${get().selectedUserMessages[0]?.created_at}&limit=10`);
+      const res = await api.get(
+        `/messages/loadMore?receiver_id=${get().selectedUser.id}&oldestDate=${
+          get().selectedUserMessages[0]?.created_at
+        }&limit=10`
+      );
 
-      if(res.data.data.length === 0) return;
-      set({ selectedUserMessages: [...res.data.data.reverse(), ...get().selectedUserMessages] });
-
+      if (res.data.data.length === 0) return;
+      set({
+        selectedUserMessages: [
+          ...res.data.data.reverse(),
+          ...get().selectedUserMessages,
+        ],
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -109,5 +133,22 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  
+  scrollBottom: (bottomRef) => {
+    if (!get().latestMessage || !get().selectedUserMessages.length) return;
+
+    const latestTime = new Date(get().latestMessage.created_at);
+    const lastMessageTime = new Date(
+      get().selectedUserMessages[
+        get().selectedUserMessages.length - 1
+      ].created_at
+    );
+    if (latestTime >= lastMessageTime) {
+      bottomRef.current?.scrollIntoView({ behavior: "instant", block: "end" });
+    }
+    get().setLatestMessage(null);
+  },
+
+  getMessageImages: () => {
+    return get().selectedUserMessages.filter((msg) => msg.image);
+  },
 }));

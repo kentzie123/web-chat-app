@@ -1,7 +1,10 @@
-// Lucide icon
-import { X } from "lucide-react";
+// Lucide icons
+import { X, Video} from "lucide-react";
 
-// Store
+// Hooks
+import { useEffect, useRef, useState, useMemo } from "react";
+
+// Stores
 import { useChatStore } from "../../store/useChatStore";
 import { useAuthStore } from "../../store/useAuthStore";
 
@@ -9,26 +12,37 @@ import { useAuthStore } from "../../store/useAuthStore";
 import ChatBubble from "../ui/ChatBubble";
 import SendMessage from "../ui/SendMessage";
 import ChatSkeleton from "./skeleton/ChatSkeleton";
+import ImageViewer from "../ui/ImageViewer";
 
-// Hooks
-import { useEffect, useRef } from "react";
+// Router
+import { Link } from "react-router-dom";
+
 
 const Chat = () => {
   const {
     selectedUser,
     selectedUserMessages,
     closeChat,
-    addMessageToChat,
-    setLatestMessage,
+    scrollBottom,
     latestMessage,
     handleScrollEvent,
+    setLatestMessage,
   } = useChatStore();
-  const { authUser, socket, onlineUsers } = useAuthStore();
+  const { authUser, onlineUsers } = useAuthStore();
 
+  const [isViewerOpen, setViewerOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const messageContainerRef = useRef();
   const bottomRef = useRef(null);
 
-  // Scroll bottom
+  const images = useMemo(() => {
+    return selectedUserMessages
+      ?.filter((msg) => msg.image)
+      .map((msg) => ({ src: msg.image }))
+      .reverse();
+  }, [selectedUserMessages]);
+
+  // Scroll to bottom when the component mounts or when new messages are added
   useEffect(() => {
     if (!latestMessage || !selectedUserMessages.length) return;
 
@@ -36,17 +50,13 @@ const Chat = () => {
     const lastMessageTime = new Date(
       selectedUserMessages[selectedUserMessages.length - 1].created_at
     );
-    // Only scroll if the new message is newer than the current last message
     if (latestTime >= lastMessageTime) {
       bottomRef.current?.scrollIntoView({ behavior: "instant", block: "end" });
     }
     setLatestMessage(null);
   }, [latestMessage, selectedUserMessages]);
 
-
-  if (!selectedUser) {
-    <ChatSkeleton />;
-  }
+  if (!selectedUser) return <ChatSkeleton />;
 
   return (
     <div className="flex flex-col bg-base-100 rounded-lg h-full">
@@ -56,11 +66,7 @@ const Chat = () => {
           <div className="flex items-center gap-3">
             <img
               className="size-10 rounded-full"
-              src={
-                selectedUser.profile_pic
-                  ? selectedUser.profile_pic
-                  : "/default.png"
-              }
+              src={selectedUser.profile_pic || "/default.png"}
               alt="profile"
             />
             <div>
@@ -70,13 +76,18 @@ const Chat = () => {
               </div>
             </div>
           </div>
-          <button onClick={closeChat} className="btn btn-sm btn-ghost">
-            <X className="cursor-pointer" />
-          </button>
+          <div>
+            <Link to='/video-call' className="btn btn-ghost">
+              <Video />
+            </Link>
+            <button onClick={closeChat} className="btn btn-ghost">
+              <X />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Messages container with scroll */}
+      {/* Chat messages */}
       <div
         ref={messageContainerRef}
         onScroll={() => handleScrollEvent(messageContainerRef.current)}
@@ -89,6 +100,15 @@ const Chat = () => {
             user={message.sender_id === authUser.id ? authUser : selectedUser}
             isMine={message.sender_id === authUser.id}
             ref={i === selectedUserMessages.length - 1 ? bottomRef : null}
+            openImageViewer={() => {
+              const index = images.findIndex(
+                (img) => img.src === message.image
+              );
+              if (index !== -1) {
+                setPhotoIndex(index);
+                setViewerOpen(true);
+              }
+            }}
           />
         ))}
       </div>
@@ -97,6 +117,14 @@ const Chat = () => {
       <div>
         <SendMessage />
       </div>
+
+      <ImageViewer
+        images={images}
+        isViewerOpen={isViewerOpen}
+        setViewerOpen={setViewerOpen}
+        photoIndex={photoIndex}
+        setPhotoIndex={setPhotoIndex}
+      />
     </div>
   );
 };

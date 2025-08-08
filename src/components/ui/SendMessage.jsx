@@ -6,6 +6,7 @@ import { useRef } from "react";
 
 // Store
 import { useChatStore } from "../../store/useChatStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 // Toast 
 import toast from "react-hot-toast";
@@ -13,6 +14,7 @@ import toast from "react-hot-toast";
 const SendMessage = () => {
   const selectPic = useRef();
   const { sendMessage, selectedUser, message, setMessage } = useChatStore();
+  const { authUser } = useAuthStore();
 
 
   const handleSelectImage = (imageFile) => {
@@ -48,7 +50,7 @@ const SendMessage = () => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    sendMessage(message, selectedUser.id);
+    sendMessage(message, selectedUser.id, authUser.id);
 
     // For clearing
     setMessage({ text: "", image: null });
