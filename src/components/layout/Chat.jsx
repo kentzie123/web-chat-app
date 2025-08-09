@@ -13,13 +13,16 @@ import ChatBubble from "../ui/ChatBubble";
 import SendMessage from "../ui/SendMessage";
 import ChatSkeleton from "./skeleton/ChatSkeleton";
 import ImageViewer from "../ui/ImageViewer";
-import VideoCallModal from "../ui/VideoCallModal"; // <-- NEW
+
+// Toast
+import toast from "react-hot-toast";
 
 const Chat = () => {
   const {
     selectedUser,
     selectedUserMessages,
     closeChat,
+    scrollBottom,
     latestMessage,
     handleScrollEvent,
     setLatestMessage,
@@ -28,7 +31,6 @@ const Chat = () => {
 
   const [isViewerOpen, setViewerOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const [isCallOpen, setCallOpen] = useState(false); // <-- NEW
   const messageContainerRef = useRef();
   const bottomRef = useRef(null);
 
@@ -39,6 +41,7 @@ const Chat = () => {
       .reverse();
   }, [selectedUserMessages]);
 
+  // Scroll to bottom when the component mounts or when new messages are added
   useEffect(() => {
     if (!latestMessage || !selectedUserMessages.length) return;
 
@@ -74,8 +77,18 @@ const Chat = () => {
           </div>
           <div>
             <button
+              onClick={() => {
+                toast("Coming Soon!", {
+                  style: {
+                    background: "#f0f4ff",
+                    color: "#1d4ed8",
+                    fontWeight: "bold",
+                    border: "1px solid #bfdbfe",
+                  },
+                });
+              }}
+              type="button"
               className="btn btn-ghost"
-              onClick={() => setCallOpen(true)} // <-- NEW
             >
               <Video />
             </button>
@@ -117,7 +130,6 @@ const Chat = () => {
         <SendMessage />
       </div>
 
-      {/* Image viewer */}
       <ImageViewer
         images={images}
         isViewerOpen={isViewerOpen}
@@ -125,14 +137,6 @@ const Chat = () => {
         photoIndex={photoIndex}
         setPhotoIndex={setPhotoIndex}
       />
-
-      {/* Video Call Modal */}
-      {isCallOpen && (
-        <VideoCallModal
-          roomId={selectedUser.id} // use user ID as call room
-          onClose={() => setCallOpen(false)}
-        />
-      )}
     </div>
   );
 };
