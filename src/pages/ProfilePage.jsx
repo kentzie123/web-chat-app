@@ -20,8 +20,6 @@ const ProfilePage = () => {
     email: authUser.email,
   });
 
-  console.log(isUpdatingProfile);
-
   const handleSelectImage = (imageFile) => {
     console.log(imageFile);
     const supportedTypes = ["image/jpeg", "image/png"];
