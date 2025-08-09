@@ -9,12 +9,12 @@ import { useChatStore } from "./useChatStore";
 // Toast
 import toast from "react-hot-toast";
 
-
 export const useAuthStore = create((set, get) => ({
   authUser: null,
   isLoggingIn: false,
   isSigningUp: false,
   isCheckingAuth: true,
+  isUpdatingProfile: false,
   onlineUsers: [],
   socket: null,
 
@@ -49,14 +49,27 @@ export const useAuthStore = create((set, get) => ({
     if (get().socket?.connected) get().socket.disconnect();
   },
 
+  updateProfile: async (updatedFields) => {
+    try {
+      set({ isUpdatingProfile: true });
+      const res = await api.put("/users/update-user", updatedFields);
+      set({ authUser: res.data.data });
+      toast.success("Updated successfully");
+    } catch (err) {
+      toast.error(err.response.data.message);
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
+  },
+
   login: async (data) => {
     try {
       set({ isLoggingIn: true });
       const res = await api.post("/auth/login", data);
       set({ authUser: res.data.data });
       get().connectSocket();
-      console.log('Your info', res.data.data);
-      
+      console.log("Your info", res.data.data);
+
       toast.success("Logged in successfully");
     } catch (err) {
       toast.error(err.response.data.message);

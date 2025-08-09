@@ -34,7 +34,7 @@ const SignUpPage = () => {
           <h1 className='text-2xl font-bold text-primary'>Create Account</h1>
           <div className='text-neutral-content/60'>Let's get started with your account</div>
         </div>
-        <div className='space-y-6'>
+        <div className='space-y-5'>
           <div className='space-y-1'>
             <div className='text-sm text-primary font-medium'>Fullname</div>
             <div className='relative'>
