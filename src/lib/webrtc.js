@@ -1,6 +1,7 @@
-import { socket } from "../socket/socket";
+import { useAuthStore } from "../store/useAuthStore";
 
 export function createPeerConnection(remoteVideoRef, roomId) {
+  const { socket } = useAuthStore();
   const pc = new RTCPeerConnection();
 
   // When remote track arrives → attach to <video>
