@@ -1,11 +1,9 @@
 import { useEffect, useRef } from "react";
 import { createPeerConnection } from "../../lib/webrtc";
-
-// Stores
 import { useAuthStore } from "../../store/useAuthStore";
 
 export default function VideoCallModal({ roomId, onClose }) {
-  const { socket} = useAuthStore();
+  const { socket } = useAuthStore();
   const myVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const pcRef = useRef(null);
@@ -13,14 +11,12 @@ export default function VideoCallModal({ roomId, onClose }) {
   useEffect(() => {
     const init = async () => {
       // 1. Create PeerConnection
-      pcRef.current = createPeerConnection(remoteVideoRef, roomId);
+      pcRef.current = createPeerConnection(remoteVideoRef, roomId, socket);
 
       // 2. Get my camera + mic
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         myVideoRef.current.srcObject = stream;
-
-        // Attach my tracks to PeerConnection
         stream.getTracks().forEach(track => pcRef.current.addTrack(track, stream));
       } catch (err) {
         console.error("Error accessing camera/mic:", err);
@@ -60,7 +56,7 @@ export default function VideoCallModal({ roomId, onClose }) {
       socket.off("answer");
       socket.off("ice-candidate");
     };
-  }, [roomId]);
+  }, [roomId, socket]);
 
   // 📞 Start call (caller clicks)
   const callUser = async () => {
@@ -73,7 +69,6 @@ export default function VideoCallModal({ roomId, onClose }) {
     <div className="video-call">
       <video ref={myVideoRef} autoPlay muted playsInline className="my-video" />
       <video ref={remoteVideoRef} autoPlay playsInline className="remote-video" />
-
       <div className="controls">
         <button onClick={callUser}>📞 Call</button>
         <button onClick={onClose}>❌ End</button>
