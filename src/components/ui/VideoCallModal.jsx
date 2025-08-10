@@ -24,7 +24,7 @@ const VideoCallModal = () => {
     <div className="fixed w-screen h-screen flex justify-center items-center bg-black/80 z-100">
       {/* <video src="" className="scale-x-[-1] w-full max-w-[500px]" autoPlay playsInline/> */}
       <div className="relative h-[60%] w-full max-w-[800px]">
-         <video ref={myVideoRef} className="w-full h-full bg-white rounded-lg"></video>  {/*my camera */}
+         <video ref={myVideoRef} className="w-full h-full bg-white rounded-lg" autoPlay playsInline></video>  {/*my camera */}
         <div className="absolute bottom-3 right-1 rounded-lg border-2 border-primary bg-base-100 h-35 w-50"></div>  {/*other user camera */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3 p-2 rounded-full bg-gray-900/60">
           <button onClick={()=> setIsMicOn(prev => !prev)} type="button" className={`btn ${!isMicOn ? 'btn-error' : ''} btn-circle rounded-full`}>{isMicOn ? <Mic className='size-4'/> : <MicOff className='size-4'/>}</button>
