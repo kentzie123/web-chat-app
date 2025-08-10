@@ -1,7 +1,11 @@
 import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
+// Stores
+import { useVideoCallStore } from "../../store/useVideoCallStore";
+
 const VideoCallModal = () => {
+  const { setIsCalling } = useVideoCallStore();
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null); // for the other camera
   const streamRef = useRef(null);
@@ -93,7 +97,7 @@ const VideoCallModal = () => {
               <VideoOff className="size-5" />
             )}
           </button>
-          <button type="button" className="btn btn-error btn-circle">
+          <button onClick={setIsCalling(false)} type="button" className="btn btn-error btn-circle">
             <PhoneOff className="size-5" />
           </button>
         </div>

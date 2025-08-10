@@ -18,6 +18,7 @@ import ProfilePage from "./pages/ProfilePage";
 // Store
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
+import { useVideoCallStore } from "./store/useVideoCallStore";
 
 // Toast
 import { Toaster } from "react-hot-toast";
@@ -25,6 +26,7 @@ import { useEffect } from "react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { isCalling } = useVideoCallStore();
 
   const { theme } = useThemeStore();
 
@@ -42,7 +44,7 @@ function App() {
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
       <Toaster />
       <Topnav />
-      <VideoCallModal/>
+      {isCalling && <VideoCallModal/>}
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />

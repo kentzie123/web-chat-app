@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 // Stores
 import { useChatStore } from "../../store/useChatStore";
 import { useAuthStore } from "../../store/useAuthStore";
+import { useVideoCallStore } from "../../store/useVideoCallStore";
 
 // Components
 import ChatBubble from "../ui/ChatBubble";
@@ -28,6 +29,7 @@ const Chat = () => {
     setLatestMessage,
   } = useChatStore();
   const { authUser, onlineUsers } = useAuthStore();
+  const { setIsCalling } = useVideoCallStore();
 
   const [isViewerOpen, setViewerOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -77,16 +79,7 @@ const Chat = () => {
           </div>
           <div>
             <button
-              onClick={() => {
-                toast("Coming Soon!", {
-                  style: {
-                    background: "#f0f4ff",
-                    color: "#1d4ed8",
-                    fontWeight: "bold",
-                    border: "1px solid #bfdbfe",
-                  },
-                });
-              }}
+              onClick={()=> setIsCalling(true)}
               type="button"
               className="btn btn-ghost"
             >
