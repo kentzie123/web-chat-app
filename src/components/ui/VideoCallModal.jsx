@@ -54,6 +54,11 @@ const VideoCallModal = () => {
     setIsCamOn((prev) => !prev);
   };
 
+  const endCall = () => {
+  streamRef.current?.getTracks().forEach(track => track.stop());
+  setIsCalling(false);
+};
+
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
       <div className="relative h-[60%] w-full max-w-[800px] rounded-lg overflow-hidden bg-black">
@@ -97,7 +102,7 @@ const VideoCallModal = () => {
               <VideoOff className="size-5" />
             )}
           </button>
-          <button onClick={setIsCalling(false)} type="button" className="btn btn-error btn-circle">
+          <button onClick={endCall} type="button" className="btn btn-error btn-circle">
             <PhoneOff className="size-5" />
           </button>
         </div>
