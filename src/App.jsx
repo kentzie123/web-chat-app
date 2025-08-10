@@ -6,6 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 // Components
 import Topnav from "./components/layout/Topnav";
 import Loading from "./components/ui/Loading";
+import VideoCallModal from "./components/ui/VideoCallModal";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -41,6 +42,7 @@ function App() {
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
       <Toaster />
       <Topnav />
+      <VideoCallModal/>
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
