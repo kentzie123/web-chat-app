@@ -21,7 +21,7 @@ const VideoCallModal = () => {
   
 
   return (
-    <div className="fixed w-screen h-screen flex justify-center items-center bg-base-300/80 z-100">
+    <div className="fixed w-screen h-screen flex justify-center items-center bg-black/80 z-100">
       {/* <video src="" className="scale-x-[-1] w-full max-w-[500px]" autoPlay playsInline/> */}
       <div className="relative h-[60%] w-full max-w-[800px]">
          <video ref={myVideoRef} className="w-full h-full bg-white rounded-lg"></video>  {/*my camera */}
