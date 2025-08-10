@@ -34,63 +34,67 @@ const VideoCallModal = () => {
     startStream();
 
     return () => {
-      streamRef.current?.getTracks().forEach(track => track.stop());
+      streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);
 
   const toggleMic = () => {
     const audioTrack = streamRef.current?.getAudioTracks()[0];
     if (audioTrack) audioTrack.enabled = !audioTrack.enabled;
-    setIsMicOn(prev => !prev);
+    setIsMicOn((prev) => !prev);
   };
 
   const toggleCam = () => {
     const videoTrack = streamRef.current?.getVideoTracks()[0];
     if (videoTrack) videoTrack.enabled = !videoTrack.enabled;
-    setIsCamOn(prev => !prev);
+    setIsCamOn((prev) => !prev);
   };
 
   return (
-    <div className="fixed w-screen h-screen flex justify-center items-center bg-black/80 z-[100]">
-      <div className="relative h-[60%] w-full max-w-[800px] bg-black rounded-lg">
-        
-        {/* My camera */}
+    <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
+      <div className="relative h-[60%] w-full max-w-[800px] rounded-lg overflow-hidden bg-black">
+        {/* Remote user's camera (full background) */}
         <video
-          ref={localVideoRef}
-          className="w-full h-full scale-x-[-1]"
+          ref={remoteVideoRef}
+          className="w-full h-full object-cover scale-x-[-1]"
           autoPlay
           playsInline
         />
 
-        {/* Other user's camera */}
+        {/* My camera (floating preview) */}
         <video
-          ref={remoteVideoRef}
-          className="absolute bottom-3 right-1 h-32 w-48 rounded-lg border-2 border-primary bg-base-100 scale-x-[-1]"
+          ref={localVideoRef}
+          className="absolute bottom-4 right-4 h-32 w-48 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg"
           autoPlay
           playsInline
         />
 
         {/* Controls */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3 p-2 rounded-full bg-gray-900/60">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 p-3 rounded-full bg-gray-900/70 backdrop-blur-sm shadow-lg">
           <button
             onClick={toggleMic}
             type="button"
-            className={`btn ${!isMicOn ? "btn-error" : ""} btn-circle rounded-full`}
+            className={`btn ${!isMicOn ? "btn-error" : ""} btn-circle`}
           >
-            {isMicOn ? <Mic className="size-4" /> : <MicOff className="size-4" />}
+            {isMicOn ? (
+              <Mic className="size-5" />
+            ) : (
+              <MicOff className="size-5" />
+            )}
           </button>
           <button
             onClick={toggleCam}
             type="button"
-            className={`btn ${!isCamOn ? "btn-error" : ""} btn-circle rounded-full`}
+            className={`btn ${!isCamOn ? "btn-error" : ""} btn-circle`}
           >
-            {isCamOn ? <Video className="size-4" /> : <VideoOff className="size-4" />}
+            {isCamOn ? (
+              <Video className="size-5" />
+            ) : (
+              <VideoOff className="size-5" />
+            )}
           </button>
-          <button
-            type="button"
-            className="btn btn-error btn-circle rounded-full"
-          >
-            <PhoneOff className="size-4" />
+          <button type="button" className="btn btn-error btn-circle">
+            <PhoneOff className="size-5" />
           </button>
         </div>
       </div>
