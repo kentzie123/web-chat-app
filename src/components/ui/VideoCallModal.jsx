@@ -2,7 +2,7 @@
 import { Mic, MicOff, Video, VideoOff, PhoneOff  } from 'lucide-react';
 
 // Hooks
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const VideoCallModal = () => {
   const myVideoRef = useRef(null);
@@ -15,7 +15,10 @@ const VideoCallModal = () => {
     // stream.getTracks().forEach(track => pcRef.current.addTrack(track, stream));
   };
 
-  startStream();
+  useEffect(()=>{
+    startStream();
+  },[])
+  
 
   return (
     <div className="fixed w-screen h-screen flex justify-center items-center bg-base-300/80 z-100">
