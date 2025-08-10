@@ -54,7 +54,12 @@ const VideoCallModal = () => {
         />
         
         {/* Other user camera */}
-        <div className="absolute bottom-3 right-1 rounded-lg border-2 border-primary bg-base-100 h-35 w-50"></div>
+        <video
+          ref={myVideoRef}
+          className="absolute bottom-3 right-1 rounded-lg border-2 border-primary bg-base-100 scale-x-[-1]"
+          autoPlay
+          playsInline
+        />
         
         {/* Controls */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3 p-2 rounded-full bg-gray-900/60">
