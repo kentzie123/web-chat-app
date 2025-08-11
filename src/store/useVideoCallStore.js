@@ -5,33 +5,14 @@ import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
 const incomingCallMP3 = new Audio("/incomingCall.mp3");
-let ringtonePrimed = false; // <— Add this outside store
 
 export const useVideoCallStore = create((set, get) => ({
   isCalling: false,
   callerInfo: null,
 
-  // Async version with play/unlock logic
-  primeRingtone: async () => {
-    if (ringtonePrimed) return;
-    ringtonePrimed = true;
-
-    try {
-      await incomingCallMP3.play();
-      incomingCallMP3.pause();
-      incomingCallMP3.currentTime = 0;
-    } catch {
-      // Silently ignore if blocked initially
-    }
-  },
-
-  playIncomingCallerMP3: async () => {
+  playIncomingCallerMP3: () => {
     incomingCallMP3.loop = true;
-    try {
-      await incomingCallMP3.play();
-    } catch (err) {
-      console.warn("Ringtone play blocked:", err);
-    }
+    incomingCallMP3.play();
   },
 
   setIsCalling: (bol) => {

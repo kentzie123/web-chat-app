@@ -21,23 +21,24 @@ import { useVideoCallStore } from "./store/useVideoCallStore";
 
 // Toast
 import { Toaster } from "react-hot-toast";
-import { useEffect } from "react";
+
+// Hooks
+import { useEffect, useRef } from "react";
 
 function App() {
+  const { interactClick } = useRef(null);
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { isCalling, callerInfo } = useVideoCallStore();
   const { theme } = useThemeStore();
-  const primeRingtone = useVideoCallStore((state) => state.primeRingtone);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   useEffect(() => {
-    // Fallback: prime ringtone on first user interaction
-    const unlock = () => primeRingtone();
-    window.addEventListener("click", unlock, { once: true });
-    return () => window.removeEventListener("click", unlock);
+    if (interactClick.current) {
+      interactClick.current.click();
+    }
   }, []);
 
   if (isCheckingAuth && !authUser) {
@@ -46,6 +47,7 @@ function App() {
 
   return (
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
+      <button ref={interactClick} type="button"></button>
       <Toaster />
       <Topnav />
       {isCalling && <VideoCallModal />}
