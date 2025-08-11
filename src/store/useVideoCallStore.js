@@ -4,33 +4,39 @@ import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
-const incomingCallMP3 = new Audio("/incoming-call.mp3"); 
+const incomingCallMP3 = new Audio("/incoming-call.mp3");
 
-export const useVideoCallStore = create( (set) => ({
-    isCalling: false,
-    callerInfo: null,
+export const useVideoCallStore = create((set, get) => ({
+  isCalling: false,
+  callerInfo: null,
 
-    setIsCalling: (bol) => {
-        set({isCalling: bol});
-    },
+  playIncomingCallerMP3: () => {
+    incomingCallMP3.loop = true;
+    incomingCallMP3.play();
+  },
 
-    handleCallUser: () => {
-        const { socket } = useAuthStore.getState();
-        const { selectedUser } = useChatStore.getState();
+  setIsCalling: (bol) => {
+    set({ isCalling: bol });
+  },
 
-        if(!selectedUser) return;
+  handleCallUser: () => {
+    const { socket } = useAuthStore.getState();
+    const { selectedUser } = useChatStore.getState();
 
-        set({isCalling: true});
+    if (!selectedUser) return;
 
-        socket.emit("call-user", {targetId: selectedUser.id});
+    set({ isCalling: true });
 
-    },
+    socket.emit("call-user", { targetId: selectedUser.id });
+  },
 
-    handleListenIncomingCall: (socket) => {
-        socket.on("incoming-call", ({fromSocketId, fromUserId}) => {
-            const callerInfo = useChatStore.getState().users.find( user => user.id === fromUserId);
-            set({callerInfo});
-            incomingCallMP3.play();
-        })
-    }
-}))
+  handleListenIncomingCall: (socket) => {
+    socket.on("incoming-call", ({ fromSocketId, fromUserId }) => {
+      const callerInfo = useChatStore
+        .getState()
+        .users.find((user) => user.id === fromUserId);
+      set({ callerInfo });
+      get().playIncomingCallerMP3();
+    });
+  },
+}));
