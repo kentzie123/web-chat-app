@@ -15,6 +15,11 @@ export const useVideoCallStore = create((set, get) => ({
     incomingCallMP3.play();
   },
 
+  stopIncomingCallerMP3: () => {
+    incomingCallMP3.pause();
+    incomingCallMP3.currentTime = 0;
+  },
+
   setIsCalling: (bol) => {
     set({ isCalling: bol });
   },
@@ -27,16 +32,31 @@ export const useVideoCallStore = create((set, get) => ({
 
     set({ isCalling: true });
 
-    socket.emit("call-user", { targetId: selectedUser.id });
+    socket.emit("call-user", { callerInfo: useAuthStore.getState().authUser });
   },
 
   handleListenIncomingCall: (socket) => {
-    socket.on("incoming-call", ({ fromSocketId, fromUserId }) => {
-      const callerInfo = useChatStore
-        .getState()
-        .users.find((user) => user.id === fromUserId);
+    socket.on("incoming-call", ({ fromSocketId, callerInfo }) => {
       set({ callerInfo });
       get().playIncomingCallerMP3();
     });
+
+    socket.on("call-rejected", ()=>{
+        set({isCalling: true, callerInfo: null});
+        get().stopIncomingCallerMP3();
+    })
+  },
+
+  handleRejectCall: () => {
+    const { socket } = useAuthStore.getState();
+    const { callerInfo } = get();
+
+    if (!callerInfo) return;
+
+    socket.emit("reject-call", { callerUserId: callerInfo.id });
+
+    // Stop ringing locally
+    set({ isCalling: false, callerInfo: null });
+    get().stopIncomingCallerMP3();
   },
 }));
