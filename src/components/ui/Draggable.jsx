@@ -6,9 +6,12 @@ export default function DraggableVideo({ children }) {
   const parentRef = useRef(null);
 
   const [bounds, setBounds] = useState({ maxX: 0, maxY: 0 });
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState(() => {
+    const saved = localStorage.getItem("draggable-video-pos");
+    return saved ? JSON.parse(saved) : { x: 0, y: 0 };
+  });
 
-  // Measure bounds and set initial bottom-right position
+  // Measure bounds and set initial position
   useLayoutEffect(() => {
     if (ref.current && ref.current.parentElement) {
       parentRef.current = ref.current.parentElement;
@@ -20,8 +23,14 @@ export default function DraggableVideo({ children }) {
         const maxY = parentRect.height - childRect.height;
 
         setBounds({ maxX, maxY });
-        // Set initial position to bottom-right
-        setPosition({ x: maxX, y: maxY });
+
+        // If there's no saved position, default to bottom-right
+        const saved = localStorage.getItem("draggable-video-pos");
+        if (!saved) {
+          const defaultPos = { x: maxX, y: maxY };
+          setPosition(defaultPos);
+          localStorage.setItem("draggable-video-pos", JSON.stringify(defaultPos));
+        }
       };
 
       updateBounds();
@@ -30,11 +39,21 @@ export default function DraggableVideo({ children }) {
     }
   }, []);
 
+  // Drag handler using movement to avoid initial jump
   useDrag(
-    ({ offset: [x, y] }) => {
-      const clampedX = Math.max(0, Math.min(x, bounds.maxX));
-      const clampedY = Math.max(0, Math.min(y, bounds.maxY));
+    ({ movement: [mx, my], memo }) => {
+      if (!memo) memo = position;
+
+      const clampedX = Math.max(0, Math.min(memo.x + mx, bounds.maxX));
+      const clampedY = Math.max(0, Math.min(memo.y + my, bounds.maxY));
+
       setPosition({ x: clampedX, y: clampedY });
+      localStorage.setItem(
+        "draggable-video-pos",
+        JSON.stringify({ x: clampedX, y: clampedY })
+      );
+
+      return memo;
     },
     { target: ref }
   );
