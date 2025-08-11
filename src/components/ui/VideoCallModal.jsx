@@ -55,66 +55,55 @@ const VideoCallModal = () => {
   };
 
   const endCall = () => {
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    setIsCalling(false);
-  };
+  streamRef.current?.getTracks().forEach(track => track.stop());
+  setIsCalling(false);
+};
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
       <div className="relative h-[60%] w-full max-w-[800px] rounded-lg overflow-hidden bg-black">
-        {/* Remote user's camera — full background */}
+        {/* Remote user's camera (full background) */}
         <video
           ref={remoteVideoRef}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover scale-x-[-1]"
           autoPlay
           playsInline
         />
 
-        {/* My camera — floating preview (responsive, aspect-locked) */}
-        <div className="absolute bottom-4 right-4 w-[clamp(96px,18vw,240px)] pb-[75%] rounded-lg overflow-hidden border-2 border-primary shadow-lg z-10">
-          <video
-            ref={localVideoRef}
-            muted
-            autoPlay
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover scale-x-[-1]"
-          />
-        </div>
+        {/* My camera (floating preview) */}
+        <video
+          ref={localVideoRef}
+          className="absolute bottom-4 right-4 h-32 w-48 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg"
+          autoPlay
+          playsInline
+        />
 
         {/* Controls */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 p-3 rounded-full bg-gray-900/70 backdrop-blur-sm shadow-lg z-20">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 p-3 rounded-full bg-gray-900/70 backdrop-blur-sm shadow-lg">
           <button
             onClick={toggleMic}
-            aria-label="Toggle microphone"
             type="button"
             className={`btn ${!isMicOn ? "btn-error" : ""} btn-circle`}
           >
             {isMicOn ? (
-              <Mic className="h-5 w-5" />
+              <Mic className="size-5" />
             ) : (
-              <MicOff className="h-5 w-5" />
+              <MicOff className="size-5" />
             )}
           </button>
-
           <button
             onClick={toggleCam}
-            aria-label="Toggle camera"
             type="button"
             className={`btn ${!isCamOn ? "btn-error" : ""} btn-circle`}
           >
             {isCamOn ? (
-              <Video className="h-5 w-5" />
+              <Video className="size-5" />
             ) : (
-              <VideoOff className="h-5 w-5" />
+              <VideoOff className="size-5" />
             )}
           </button>
-
-          <button
-            type="button"
-            aria-label="Hang up"
-            className="btn btn-error btn-circle"
-          >
-            <PhoneOff className="h-5 w-5" />
+          <button onClick={endCall} type="button" className="btn btn-error btn-circle">
+            <PhoneOff className="size-5" />
           </button>
         </div>
       </div>
