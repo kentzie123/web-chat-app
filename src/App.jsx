@@ -1,5 +1,3 @@
-import { io } from "socket.io-client";
-
 // For routing
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -28,6 +26,7 @@ import { useEffect } from "react";
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { isCalling, callerInfo } = useVideoCallStore();
+  const { theme } = useThemeStore();
   const primeRingtone = useVideoCallStore((state) => state.primeRingtone);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ function App() {
   }, [checkAuth]);
 
   useEffect(() => {
-    // Fallback: Prime on first user click if not already primed
+    // Fallback: prime ringtone on first user interaction
     const unlock = () => primeRingtone();
     window.addEventListener("click", unlock, { once: true });
     return () => window.removeEventListener("click", unlock);
