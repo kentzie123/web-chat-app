@@ -32,7 +32,7 @@ export const useVideoCallStore = create((set, get) => ({
 
     set({ isCalling: true });
 
-    socket.emit("call-user", { callerInfo: useAuthStore.getState().authUser });
+    socket.emit("call-user", { targetId: selectedUser.id, callerInfo: useAuthStore.getState().authUser });
   },
 
   handleListenIncomingCall: (socket) => {
