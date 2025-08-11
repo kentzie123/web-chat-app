@@ -50,6 +50,7 @@ function App() {
       <Topnav />
       {isCalling && <VideoCallModal />}
       {callerInfo && <IncomingCall />}
+      <IncomingCall />
       <Routes>
         <Route
           path="/"
