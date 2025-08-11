@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
-const incomingCallMP3 = new Audio("/incoming-call.mp3");
+const incomingCallMP3 = new Audio("/incomingCall.mp3");
 
 export const useVideoCallStore = create((set, get) => ({
   isCalling: false,
