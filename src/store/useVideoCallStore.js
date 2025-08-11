@@ -5,6 +5,7 @@ import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
 const incomingCallMP3 = new Audio("/incomingCall.mp3");
+let ringtonePrimed = false; // <— Add this outside store
 
 export const useVideoCallStore = create((set, get) => ({
   isCalling: false,
@@ -20,7 +21,7 @@ export const useVideoCallStore = create((set, get) => ({
       incomingCallMP3.pause();
       incomingCallMP3.currentTime = 0;
     } catch {
-      // Fails silently—okay if blocked initially
+      // Silently ignore if blocked initially
     }
   },
 
