@@ -7,6 +7,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Topnav from "./components/layout/Topnav";
 import Loading from "./components/ui/Loading";
 import VideoCallModal from "./components/ui/VideoCallModal";
+import IncomingCall from "./components/ui/IncomingCall";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -26,7 +27,7 @@ import { useEffect } from "react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-  const { isCalling } = useVideoCallStore();
+  const { isCalling, callerInfo } = useVideoCallStore();
 
   const { theme } = useThemeStore();
 
@@ -45,6 +46,7 @@ function App() {
       <Toaster />
       <Topnav />
       {isCalling && <VideoCallModal/>}
+      {callerInfo && <IncomingCall/>}
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />

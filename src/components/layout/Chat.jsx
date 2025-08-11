@@ -29,7 +29,7 @@ const Chat = () => {
     setLatestMessage,
   } = useChatStore();
   const { authUser, onlineUsers } = useAuthStore();
-  const { setIsCalling } = useVideoCallStore();
+  const { handleCallUser } = useVideoCallStore();
 
   const [isViewerOpen, setViewerOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -79,7 +79,7 @@ const Chat = () => {
           </div>
           <div>
             <button
-              onClick={()=> setIsCalling(true)}
+              onClick={handleCallUser}
               type="button"
               className="btn btn-ghost"
             >

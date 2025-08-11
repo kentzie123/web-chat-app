@@ -91,9 +91,9 @@ const VideoCallModal = () => {
             className={`btn ${!isMicOn ? "btn-error" : ""} btn-circle`}
           >
             {isMicOn ? (
-              <Mic className="size-5" />
+              <Mic className="size-4" />
             ) : (
-              <MicOff className="size-5" />
+              <MicOff className="size-4" />
             )}
           </button>
           <button
@@ -102,9 +102,9 @@ const VideoCallModal = () => {
             className={`btn ${!isCamOn ? "btn-error" : ""} btn-circle`}
           >
             {isCamOn ? (
-              <Video className="size-5" />
+              <Video className="size-4" />
             ) : (
-              <VideoOff className="size-5" />
+              <VideoOff className="size-4" />
             )}
           </button>
           <button
@@ -112,7 +112,7 @@ const VideoCallModal = () => {
             type="button"
             className="btn btn-error btn-circle"
           >
-            <PhoneOff className="size-5" />
+            <PhoneOff className="size-4" />
           </button>
         </div>
       </div>

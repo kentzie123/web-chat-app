@@ -30,8 +30,10 @@ export const useChatStore = create((set, get) => ({
     console.log("Socket on new_message");
 
     socket.on("new_message", (newMessage) => {
-      get().addMessageToChat(newMessage);
-      get().playMusic()
+      if(selectedUser.id === newMessage.sender_id){
+        get().addMessageToChat(newMessage);
+        get().playMusic()
+      }
     });
   },
 

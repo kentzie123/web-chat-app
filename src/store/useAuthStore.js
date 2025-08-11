@@ -5,6 +5,7 @@ import io from "socket.io-client";
 
 // Store
 import { useChatStore } from "./useChatStore";
+import { useVideoCallStore } from "./useVideoCallStore";
 
 // Toast
 import toast from "react-hot-toast";
@@ -40,8 +41,11 @@ export const useAuthStore = create((set, get) => ({
       set({ onlineUsers: userIds });
     });
 
-    // New message listeners
+    // New message listener
     useChatStore.getState().handleNewMessageListener(socket);
+
+    // Incoming-call listener
+    useVideoCallStore.getState().handleListenIncomingCall(socket);
   },
 
   disconnectSocket: () => {
