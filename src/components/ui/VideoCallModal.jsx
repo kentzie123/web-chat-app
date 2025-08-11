@@ -76,7 +76,7 @@ const VideoCallModal = () => {
         <DraggableVideo>
           <video
             ref={localVideoRef}
-            className="absolute bottom-4 right-4 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move
+            className="rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move
                w-48 h-32 sm:w-32 sm:h-20"
             autoPlay
             playsInline
