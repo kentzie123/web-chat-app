@@ -35,11 +35,33 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
+  const audioRef = new Audio("/incomingCall.mp3");
+
   useEffect(() => {
-    if (interactClick.current) {
+    const unlockAudio = () => {
+      audioRef.current.muted = true;
+      audioRef.current.play().then(() => {
+        audioRef.current.pause();
+        audioRef.current.muted = false;
+        console.log("Audio unlocked");
+      });
+      window.removeEventListener("click", unlockAudio);
+    };
+
+    window.addEventListener("click", unlockAudio);
+  }, []);
+
+  const playRingtone = () => {
+    audioRef.current.play();
+  };
+
+  useEffect(() => {
+    if (interactClick?.current) {
+      console.log('Button click');
+      
       interactClick.current.click();
     }
-  }, []);
+  }, [interactClick]);
 
   if (isCheckingAuth && !authUser) {
     return <Loading />;
@@ -47,7 +69,7 @@ function App() {
 
   return (
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
-      <button ref={interactClick} type="button"></button>
+      <button className="hidden" onClick={playRingtone}>Test Ringtone</button>
       <Toaster />
       <Topnav />
       {isCalling && <VideoCallModal />}
