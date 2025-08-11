@@ -10,9 +10,27 @@ export const useVideoCallStore = create((set, get) => ({
   isCalling: false,
   callerInfo: null,
 
-  playIncomingCallerMP3: () => {
+  // Async version with play/unlock logic
+  primeRingtone: async () => {
+    if (ringtonePrimed) return;
+    ringtonePrimed = true;
+
+    try {
+      await incomingCallMP3.play();
+      incomingCallMP3.pause();
+      incomingCallMP3.currentTime = 0;
+    } catch {
+      // Fails silently—okay if blocked initially
+    }
+  },
+
+  playIncomingCallerMP3: async () => {
     incomingCallMP3.loop = true;
-    incomingCallMP3.play();
+    try {
+      await incomingCallMP3.play();
+    } catch (err) {
+      console.warn("Ringtone play blocked:", err);
+    }
   },
 
   setIsCalling: (bol) => {

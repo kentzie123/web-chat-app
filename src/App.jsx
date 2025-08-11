@@ -28,16 +28,18 @@ import { useEffect } from "react";
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { isCalling, callerInfo } = useVideoCallStore();
-
-  const { theme } = useThemeStore();
+  const primeRingtone = useVideoCallStore((state) => state.primeRingtone);
 
   useEffect(() => {
-    console.log('Auth run');
-    
     checkAuth();
   }, [checkAuth]);
 
-  
+  useEffect(() => {
+    // Fallback: Prime on first user click if not already primed
+    const unlock = () => primeRingtone();
+    window.addEventListener("click", unlock, { once: true });
+    return () => window.removeEventListener("click", unlock);
+  }, [primeRingtone]);
 
   if (isCheckingAuth && !authUser) {
     return <Loading />;
@@ -47,14 +49,26 @@ function App() {
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
       <Toaster />
       <Topnav />
-      {isCalling && <VideoCallModal/>}
-      {callerInfo && <IncomingCall/>}
+      {isCalling && <VideoCallModal />}
+      {callerInfo && <IncomingCall />}
       <Routes>
-        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+        <Route
+          path="/"
+          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+        />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route
+          path="/profile"
+          element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+        />
       </Routes>
     </div>
   );
