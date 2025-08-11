@@ -38,7 +38,7 @@ function App() {
     const unlock = () => primeRingtone();
     window.addEventListener("click", unlock, { once: true });
     return () => window.removeEventListener("click", unlock);
-  }, [primeRingtone]);
+  }, []);
 
   if (isCheckingAuth && !authUser) {
     return <Loading />;
