@@ -1,6 +1,8 @@
 import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
+import Draggable from "react-draggable";
+
 // Stores
 import { useVideoCallStore } from "../../store/useVideoCallStore";
 
@@ -55,20 +57,22 @@ const VideoCallModal = () => {
   };
 
   const endCall = () => {
-  streamRef.current?.getTracks().forEach(track => track.stop());
-  setIsCalling(false);
-};
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    setIsCalling(false);
+  };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
       <div className="relative h-[60%] w-full max-w-[800px] rounded-lg overflow-hidden bg-black">
-        {/* Remote user's camera (full background) */}
-        <video
-          ref={remoteVideoRef}
-          className="w-full h-full object-cover scale-x-[-1]"
-          autoPlay
-          playsInline
-        />
+        {/* Remote user's camera (draggable inside container) */}
+        <Draggable bounds="parent">
+          <video
+            ref={remoteVideoRef}
+            className="absolute top-0 left-0 w-full h-full object-cover scale-x-[-1] cursor-move"
+            autoPlay
+            playsInline
+          />
+        </Draggable>
 
         {/* My camera (floating preview) */}
         <video
@@ -102,7 +106,11 @@ const VideoCallModal = () => {
               <VideoOff className="size-5" />
             )}
           </button>
-          <button onClick={endCall} type="button" className="btn btn-error btn-circle">
+          <button
+            onClick={endCall}
+            type="button"
+            className="btn btn-error btn-circle"
+          >
             <PhoneOff className="size-5" />
           </button>
         </div>
