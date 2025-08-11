@@ -32,6 +32,8 @@ function App() {
   const { theme } = useThemeStore();
 
   useEffect(() => {
+    console.log('Auth run');
+    
     checkAuth();
   }, [checkAuth]);
 
