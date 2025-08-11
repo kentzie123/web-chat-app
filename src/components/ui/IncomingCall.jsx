@@ -20,7 +20,7 @@ const IncomingCall = () => {
         <div className="font-bold">{callerInfo?.fullname}</div>
         <div className="flex items-center gap-4 pt-2">
           <button
-            onCanPlay={handleRejectCall}
+            onClick={handleRejectCall}
             type="button"
             className="btn btn-error btn-circle"
           >
