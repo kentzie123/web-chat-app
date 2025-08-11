@@ -50,11 +50,8 @@ export const useVideoCallStore = create((set, get) => ({
   handleRejectCall: () => {
     const { socket } = useAuthStore.getState();
     const { callerInfo } = get();
-
-    console.log("Caller Info:", callerInfo);
     
     if (!callerInfo) return;
-    console.log("Rejected call");
     
     socket.emit("reject-call", { callerUserId: callerInfo.id });
 
