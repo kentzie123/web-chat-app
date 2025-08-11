@@ -64,23 +64,25 @@ const VideoCallModal = () => {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
       <div className="relative h-[60%] w-full max-w-[800px] rounded-lg overflow-hidden bg-black">
-        {/* Remote user's camera (draggable inside container) */}
-        <Draggable bounds="parent">
-          <video
-            ref={remoteVideoRef}
-            className="absolute top-0 left-0 w-full h-full object-cover scale-x-[-1] cursor-move"
-            autoPlay
-            playsInline
-          />
-        </Draggable>
-
-        {/* My camera (floating preview) */}
+        {/* Remote user's camera (full background) */}
         <video
-          ref={localVideoRef}
-          className="absolute bottom-4 right-4 h-32 w-48 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg"
+          ref={remoteVideoRef}
+          className="w-full h-full object-cover scale-x-[-1]"
           autoPlay
           playsInline
         />
+
+        {/* My camera (floating preview) */}
+        <Draggable bounds="parent">
+          <div className="absolute bottom-4 right-4">
+            <video
+              ref={localVideoRef}
+              className="h-32 w-48 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move"
+              autoPlay
+              playsInline
+            />
+          </div>
+        </Draggable>
 
         {/* Controls */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 p-3 rounded-full bg-gray-900/70 backdrop-blur-sm shadow-lg">
