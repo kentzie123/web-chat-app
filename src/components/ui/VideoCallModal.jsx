@@ -1,7 +1,7 @@
 import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-import Draggable from "react-draggable";
+import DraggableVideo from "./Draggable";
 
 // Stores
 import { useVideoCallStore } from "../../store/useVideoCallStore";
@@ -73,16 +73,15 @@ const VideoCallModal = () => {
         />
 
         {/* My camera (floating preview) */}
-        <Draggable bounds="parent">
-          <div className="absolute bottom-4 right-4">
-            <video
-              ref={localVideoRef}
-              className="h-32 w-48 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move"
-              autoPlay
-              playsInline
-            />
-          </div>
-        </Draggable>
+        <DraggableVideo>
+          <video
+            ref={localVideoRef}
+            className="absolute bottom-4 right-4 rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move
+               w-48 h-32 sm:w-32 sm:h-20"
+            autoPlay
+            playsInline
+          />
+        </DraggableVideo>
 
         {/* Controls */}
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 p-3 rounded-full bg-gray-900/70 backdrop-blur-sm shadow-lg">
