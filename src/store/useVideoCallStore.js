@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
+const incomingCallMP3 = new Audio("/incoming-call.mp3"); 
+
 export const useVideoCallStore = create( (set) => ({
     isCalling: false,
     callerInfo: null,
@@ -28,6 +30,7 @@ export const useVideoCallStore = create( (set) => ({
         socket.on("incoming-call", ({fromSocketId, fromUserId}) => {
             const callerInfo = useChatStore.getState().users.find( user => user.id === fromUserId);
             set({callerInfo});
+            incomingCallMP3.play();
         })
     }
 }))
