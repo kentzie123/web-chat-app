@@ -42,9 +42,7 @@ export const useVideoCallStore = create((set, get) => ({
     });
 
     socket.on("call-rejected", ()=>{
-        console.log("User rejected your call!");
-        
-        set({isCalling: true, callerInfo: null});
+        set({isCalling: false, callerInfo: null});
         get().stopIncomingCallerMP3();
     })
   },
