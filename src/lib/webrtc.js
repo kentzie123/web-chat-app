@@ -1,17 +1,16 @@
-export function createPeerConnection(remoteVideoRef, roomId, socket) {
-  const pc = new RTCPeerConnection();
+export function createPeerConnection(setRemoteVideoStream, myVideoStream) {
+  
+  const iceServersConfig = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  };
+  const pc = new RTCPeerConnection(iceServersConfig);
 
-  // When remote track arrives → attach to <video>
   pc.ontrack = (event) => {
-    remoteVideoRef.current.srcObject = event.streams[0];
+    const remoteStream = event.streams[0];
+    setRemoteVideoStream(remoteStream);
   };
 
-  // Send my ICE candidates to the other peer
-  pc.onicecandidate = (event) => {
-    if (event.candidate) {
-      socket.emit("ice-candidate", { candidate: event.candidate, roomId });
-    }
-  };
+  myVideoStream.getTracks().forEach((track) => pc.addTrack(track, myVideoStream));
 
   return pc;
 }

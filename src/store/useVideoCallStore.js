@@ -4,11 +4,27 @@ import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
 import { useChatStore } from "./useChatStore";
 
+// WebRTC
+import { createPeerConnection } from "../lib/webrtc";
+
 const incomingCallMP3 = new Audio("/incomingCall.mp3");
 
 export const useVideoCallStore = create((set, get) => ({
   isCalling: false,
   callerInfo: null,
+  isSomeoneCalling: false,
+  myVideoStream: null,
+  peerConnection: null,
+  callerOffer: null,
+  remoteVideoStream: null,
+
+  setRemoteVideoStream: (remoteVideoStream) => {
+    set({remoteVideoStream})
+  },
+
+  setMyVideoStream: (myVideoStream) => {
+    set({ myVideoStream });
+  },
 
   playIncomingCallerMP3: () => {
     incomingCallMP3.loop = true;
@@ -24,39 +40,156 @@ export const useVideoCallStore = create((set, get) => ({
     set({ isCalling: bol });
   },
 
-  handleCallUser: () => {
+  handleCallListeners: (socket) => {
+    socket.on("incoming-call", ({ fromSocketId, callerInfo, offer }) => {
+      set({ callerInfo, callerOffer: offer });
+      get().playIncomingCallerMP3();
+    });
+
+    socket.on("call-rejected", () => {
+      set({ isCalling: false, callerInfo: null });
+      get().stopIncomingCallerMP3();
+    });
+
+    socket.on("call-answered", async ({ answer }) => {
+      const pc = get().peerConnection;
+      if (!pc) return;
+
+      await pc.setRemoteDescription(new RTCSessionDescription(answer));
+    });
+
+    socket.on("ice-candidate", async ({ candidate }) => {
+      const pc = get().peerConnection;
+      if (!pc) return;
+
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (error) {
+        console.error("Error adding received ICE candidate", error);
+      }
+    });
+
+    socket.on("call-ended", () => {
+      get().stopVideoCall();
+    });
+  },
+
+  handleCallUser: async () => {
     const { socket } = useAuthStore.getState();
     const { selectedUser } = useChatStore.getState();
 
     if (!selectedUser) return;
 
-    set({ isCalling: true });
+    set({ isCalling: true }); // We need to open the video call modal first so we can access the "myVideoStream"
 
-    socket.emit("call-user", { targetId: selectedUser.id, callerInfo: useAuthStore.getState().authUser });
+    const pc = createPeerConnection(get().setRemoteVideoStream, get().myVideoStream);
+
+    // Listen for ICE candidates and send to peer
+    const selectedUserId = useChatStore.getState().selectedUser.id;
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit("ice-candidate", {
+          targetId: selectedUserId,
+          candidate: event.candidate,
+        });
+      }
+    };
+
+    // Create offer
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    set({ peerConnection: pc });
+
+    socket.emit("call-user", {
+      targetId: selectedUser.id,
+      callerInfo: useAuthStore.getState().authUser,
+      offer,
+    });
   },
 
-  handleListenIncomingCall: (socket) => {
-    socket.on("incoming-call", ({ fromSocketId, callerInfo }) => {
-      set({ callerInfo });
-      get().playIncomingCallerMP3();
-    });
 
-    socket.on("call-rejected", ()=>{
-        set({isCalling: false, callerInfo: null});
-        get().stopIncomingCallerMP3();
-    })
+
+  handleAnswerCall: async () => {
+    const { socket } = useAuthStore.getState();
+    const { callerInfo } = get();
+
+    set({ isCalling: true });
+
+    const pc = createPeerConnection(get().setRemoteVideoStream, get().myVideoStream);
+
+    // Set remote description (caller’s offer)
+    await pc.setRemoteDescription(new RTCSessionDescription(get().callerOffer));
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit("ice-candidate", {
+          targetId: callerInfo.id,
+          candidate: event.candidate,
+        });
+      }
+    };
+
+    // Create answer and set local description
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    // Save peer connection
+    set({ peerConnection: pc });
+
+    socket.emit("answer-call", { callerUserId: callerInfo.id, answer });
   },
 
   handleRejectCall: () => {
     const { socket } = useAuthStore.getState();
     const { callerInfo } = get();
-    
+
     if (!callerInfo) return;
-    
+
     socket.emit("reject-call", { callerUserId: callerInfo.id });
 
     // Stop ringing locally
     set({ isCalling: false, callerInfo: null });
+    get().stopIncomingCallerMP3();
+  },
+
+  handleEndCall: () => {
+    get().stopVideoCall();
+
+    // Also notify the other user if you want (optional)
+    const { socket } = useAuthStore.getState();
+    const { callerInfo } = get();
+
+    if (callerInfo) {
+      socket.emit("end-call", { targetId: callerInfo.id });
+    }
+  },
+
+  stopVideoCall: () => {
+    const pc = get().peerConnection;
+    const myStream = get().myVideoStream;
+
+    // Stop all local media tracks (camera/mic)
+    if (myStream) {
+      myStream.getTracks().forEach((track) => track.stop());
+    }
+
+    // Close the WebRTC connection
+    if (pc) {
+      pc.close();
+    }
+
+    // Reset all related states
+    set({
+      isCalling: false,
+      callerInfo: null,
+      peerConnection: null,
+      callerOffer: null,
+      myVideoStream: null,
+      remoteVideoStream: null,
+    });
+
+    // Stop ringing sound if playing
     get().stopIncomingCallerMP3();
   },
 }));

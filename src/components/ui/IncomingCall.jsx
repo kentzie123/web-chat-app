@@ -5,7 +5,7 @@ import { useVideoCallStore } from "../../store/useVideoCallStore";
 import { X, Phone, PhoneOff } from "lucide-react";
 
 const IncomingCall = () => {
-  const { callerInfo, handleRejectCall } = useVideoCallStore();
+  const { callerInfo, handleRejectCall, handleAnswerCall } = useVideoCallStore();
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
       <div className="relative flex flex-col justify-center items-center bg-base-100 p-5 rounded-lg space-y-3 w-[260px]">
@@ -26,7 +26,7 @@ const IncomingCall = () => {
           >
             <PhoneOff className="size-4" />
           </button>
-          <button type="button" className="btn btn-success btn-circle">
+          <button onClick={handleAnswerCall} type="button" className="btn btn-success btn-circle">
             <Phone className="size-4" />
           </button>
         </div>

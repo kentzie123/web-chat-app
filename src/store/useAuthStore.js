@@ -45,7 +45,7 @@ export const useAuthStore = create((set, get) => ({
     useChatStore.getState().handleNewMessageListener(socket);
 
     // Incoming-call listener
-    useVideoCallStore.getState().handleListenIncomingCall(socket);
+    useVideoCallStore.getState().handleCallListeners(socket);
   },
 
   disconnectSocket: () => {
