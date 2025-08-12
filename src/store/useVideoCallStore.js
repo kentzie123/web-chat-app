@@ -42,7 +42,7 @@ export const useVideoCallStore = create((set, get) => ({
 
   handleCallListeners: (socket) => {
     socket.on("incoming-call", ({ fromSocketId, callerInfo, offer }) => {
-      set({ callerInfo, callerOffer: offer });
+      set({ isSomeoneCalling: true, callerInfo, callerOffer: offer });
       get().playIncomingCallerMP3();
     });
 
@@ -151,7 +151,7 @@ export const useVideoCallStore = create((set, get) => ({
     await pc.setLocalDescription(answer);
 
     // Save peer connection
-    set({ peerConnection: pc });
+    set({ peerConnection: pc, isSomeoneCalling: false });
 
     socket.emit("answer-call", { callerUserId: callerInfo.id, answer });
   },
@@ -165,7 +165,7 @@ export const useVideoCallStore = create((set, get) => ({
     socket.emit("reject-call", { callerUserId: callerInfo.id });
 
     // Stop ringing locally
-    set({ isCalling: false, callerInfo: null });
+    set({ isSomeoneCalling: false, callerInfo: null });
     get().stopIncomingCallerMP3();
   },
 
@@ -202,7 +202,7 @@ export const useVideoCallStore = create((set, get) => ({
       peerConnection: null,
       callerOffer: null,
       myVideoStream: null,
-      remoteVideoStream: null,
+      remoteVideoStream: null
     });
 
     // Stop ringing sound if playing

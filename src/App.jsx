@@ -27,7 +27,7 @@ import { useEffect } from "react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-  const { isCalling, callerInfo } = useVideoCallStore();
+  const { isCalling, isSomeoneCalling } = useVideoCallStore();
   const { theme } = useThemeStore();
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function App() {
       <Toaster />
       <Topnav />
       {isCalling && <VideoCallModal />}
-      {callerInfo && <IncomingCall />}
+      {isSomeoneCalling && <IncomingCall />}
       <Routes>
         <Route
           path="/"
