@@ -67,7 +67,7 @@ const VideoCallModal = () => {
           <video
             ref={localVideoRef}
             className="rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move
-               sm:w-48 sm:h-32 w-32 h-20"
+               sm:w-48 sm:h-32 h-48 w-32"
             autoPlay
             playsInline
             muted

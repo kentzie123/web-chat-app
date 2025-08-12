@@ -42,7 +42,6 @@ function App() {
 
   return (
     <div data-theme={theme} className="relative flex flex-col min-h-screen">
-      <button type="button"></button>
       <Toaster />
       <Topnav />
       {isCalling && <VideoCallModal />}
