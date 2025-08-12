@@ -15,15 +15,13 @@ import SendMessage from "../ui/SendMessage";
 import ChatSkeleton from "./skeleton/ChatSkeleton";
 import ImageViewer from "../ui/ImageViewer";
 
-// Toast
-import toast from "react-hot-toast";
 
 const Chat = () => {
   const {
     selectedUser,
     selectedUserMessages,
     closeChat,
-    scrollBottom,
+    isMessagesLoading,
     latestMessage,
     handleScrollEvent,
     setLatestMessage,
@@ -57,7 +55,9 @@ const Chat = () => {
     setLatestMessage(null);
   }, [latestMessage, selectedUserMessages]);
 
-  if (!selectedUser) return <ChatSkeleton />;
+  if(!selectedUser || isMessagesLoading) {
+    return <ChatSkeleton />;
+  }
 
   return (
     <div className="flex flex-col bg-base-100 rounded-lg h-full">
