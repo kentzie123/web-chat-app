@@ -6,16 +6,41 @@ import DraggableVideo from "./Draggable";
 // Stores
 import { useVideoCallStore } from "../../store/useVideoCallStore";
 
-const VideoCallModal = ( { localVideoRef, streamRef } ) => {
-  const { setIsCalling, remoteVideoStream } = useVideoCallStore();
-  
+const VideoCallModal = () => {
+  const { setIsCalling, setMyVideoStream, remoteVideoStream } =
+    useVideoCallStore();
+  const localVideoRef = useRef(null);
+  const streamRef = useRef(null); // for resetting the stream
   const remoteVideoRef = useRef(null); // for the other user's camera
-  
+
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
 
-  
+  useEffect(() => {
+    const startStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        streamRef.current = stream;
 
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          setMyVideoStream(stream);
+        }
+
+      } catch (error) {
+        console.error("Error starting camera:", error);
+      }
+    };
+
+    startStream();
+
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
 
   // For streaming other user's video stream
   useEffect(() => {
@@ -24,6 +49,8 @@ const VideoCallModal = ( { localVideoRef, streamRef } ) => {
     }
   }, [remoteVideoStream]);
 
+
+  // Call buttons function
   const toggleMic = () => {
     const audioTrack = streamRef.current?.getAudioTracks()[0];
     if (audioTrack) audioTrack.enabled = !audioTrack.enabled;
