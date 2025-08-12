@@ -6,45 +6,15 @@ import DraggableVideo from "./Draggable";
 // Stores
 import { useVideoCallStore } from "../../store/useVideoCallStore";
 
-const VideoCallModal = () => {
-  const { setIsCalling, setMyVideoStream, remoteVideoStream } =
-    useVideoCallStore();
-  const localVideoRef = useRef(null);
+const VideoCallModal = ( { localVideoRef, streamRef } ) => {
+  const { setIsCalling, remoteVideoStream } = useVideoCallStore();
+  
   const remoteVideoRef = useRef(null); // for the other user's camera
-  const streamRef = useRef(null); // for resetting the stream
-
+  
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCamOn, setIsCamOn] = useState(true);
 
-  useEffect(() => {
-    const startStream = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        streamRef.current = stream;
-
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-          setMyVideoStream(stream);
-        }
-
-        // For demo: show same stream as remote (until WebRTC is set up)
-        // if (remoteVideoRef.current) {
-        //   remoteVideoRef.current.srcObject = stream;
-        // }
-      } catch (error) {
-        console.error("Error starting camera:", error);
-      }
-    };
-
-    startStream();
-
-    return () => {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-    };
-  }, []);
+  
 
 
   // For streaming other user's video stream

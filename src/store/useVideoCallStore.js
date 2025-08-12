@@ -81,7 +81,8 @@ export const useVideoCallStore = create((set, get) => ({
     if (!selectedUser) return;
 
     set({ isCalling: true }); // We need to open the video call modal first so we can access the "myVideoStream"
-
+    console.log(get().myVideoStream);
+    
     const pc = createPeerConnection(get().setRemoteVideoStream, get().myVideoStream);
 
     // Listen for ICE candidates and send to peer

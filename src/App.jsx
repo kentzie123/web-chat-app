@@ -23,18 +23,44 @@ import { useVideoCallStore } from "./store/useVideoCallStore";
 import { Toaster } from "react-hot-toast";
 
 // Hooks
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
-  const { isCalling, callerInfo } = useVideoCallStore();
+  const { isCalling, callerInfo, setMyVideoStream } = useVideoCallStore();
   const { theme } = useThemeStore();
+
+  const localVideoRef = useRef(null);
+  const streamRef = useRef(null); // for resetting the stream
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  
+  useEffect(() => {
+    const startStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        streamRef.current = stream;
+
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          setMyVideoStream(stream);
+        }
+      } catch (error) {
+        console.error("Error starting camera:", error);
+      }
+    };
+
+    startStream();
+
+    return () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
 
   if (isCheckingAuth && !authUser) {
     return <Loading />;
@@ -45,7 +71,7 @@ function App() {
       <button type="button"></button>
       <Toaster />
       <Topnav />
-      {isCalling && <VideoCallModal />}
+      {isCalling && <VideoCallModal localVideoRef={localVideoRef} streamRef={streamRef} />}
       {callerInfo && <IncomingCall />}
       <Routes>
         <Route
