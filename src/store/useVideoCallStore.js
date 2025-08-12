@@ -92,6 +92,7 @@ export const useVideoCallStore = create((set, get) => ({
         return;
       }
     }
+
     set({ isCalling: true }); // We need to open the video call modal first so we can access the "myVideoStream"
 
     const pc = createPeerConnection(
@@ -126,6 +127,19 @@ export const useVideoCallStore = create((set, get) => ({
   handleAnswerCall: async () => {
     const { socket } = useAuthStore.getState();
     const { callerInfo } = get();
+
+    if (!get().myVideoStream) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        set({ myVideoStream: stream });
+      } catch (err) {
+        console.error("Failed to get local media stream", err);
+        return;
+      }
+    }
 
     set({ isCalling: true });
 
@@ -202,7 +216,7 @@ export const useVideoCallStore = create((set, get) => ({
       peerConnection: null,
       callerOffer: null,
       myVideoStream: null,
-      remoteVideoStream: null
+      remoteVideoStream: null,
     });
 
     // Stop ringing sound if playing
