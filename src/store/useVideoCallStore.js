@@ -52,11 +52,12 @@ export const useVideoCallStore = create((set, get) => ({
       get().stopIncomingCallerMP3();
     });
 
-    socket.on("call-answered", async ({ answer }) => {
+    socket.on("call-answered", async ({ callerInfo, answer }) => {
       const pc = get().peerConnection;
       if (!pc) return;
 
       await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      set({callerInfo});
     });
 
     socket.on("ice-candidate", async ({ candidate }) => {
@@ -168,7 +169,8 @@ export const useVideoCallStore = create((set, get) => ({
     // Save peer connection
     set({ peerConnection: pc, isSomeoneCalling: false });
     get().stopIncomingCallerMP3();
-    socket.emit("answer-call", { callerUserId: callerInfo.id, answer });
+    const myUserInfo = useAuthStore.getState().authUser;
+    socket.emit("answer-call", { fromUserInfo: myUserInfo, callerUserId: callerInfo.id, answer });
   },
 
   handleRejectCall: () => {
@@ -185,7 +187,6 @@ export const useVideoCallStore = create((set, get) => ({
   },
 
   handleEndCall: () => {
-
     // Also notify the other user if you want (optional)
     const { socket } = useAuthStore.getState();
     const { callerInfo } = get();
