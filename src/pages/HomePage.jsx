@@ -7,11 +7,11 @@ import Chat from '../components/layout/Chat';
 import { useChatStore } from '../store/useChatStore';
 
 const HomePage = () => {
-  const { selectedUser } = useChatStore();
+  const { selectedUser, isMessagesLoading } = useChatStore();
 
   return (
     <div className='flex-1 grid grid-cols-12 bg-base-200 px-3 py-3 sm:px-10 lg:px-15 gap-3'>
-      {selectedUser && (
+      {(isMessagesLoading || selectedUser) && (
         <div className="fixed top-17 inset-0 z-50 md:hidden mx-3 my-3 sm:mx-10">
           <Chat />
         </div>
