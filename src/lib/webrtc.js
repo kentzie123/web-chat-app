@@ -11,8 +11,8 @@ export function createPeerConnection(setRemoteVideoStream, myVideoStream) {
           "turns:ss-turn1.xirsys.com:443?transport=tcp",
           "turns:ss-turn1.xirsys.com:5349?transport=tcp",
         ],
-        username: import.meta.env.YOUR_XIRSYS_USERNAME,
-        credential: import.meta.env.YOUR_XIRSYS_CREDENTIAL,
+        username: import.meta.env.VITE_YOUR_XIRSYS_USERNAME,
+        credential: import.meta.env.VITE_YOUR_XIRSYS_CREDENTIAL,
       },
     ],
   };
