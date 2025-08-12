@@ -152,7 +152,7 @@ export const useVideoCallStore = create((set, get) => ({
 
     // Save peer connection
     set({ peerConnection: pc, isSomeoneCalling: false });
-
+    get().stopIncomingCallerMP3();
     socket.emit("answer-call", { callerUserId: callerInfo.id, answer });
   },
 
