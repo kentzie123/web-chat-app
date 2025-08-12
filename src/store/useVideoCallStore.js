@@ -94,7 +94,7 @@ export const useVideoCallStore = create((set, get) => ({
       }
     }
 
-    set({ isCalling: true }); // We need to open the video call modal first so we can access the "myVideoStream"
+    set({ isCalling: true });
 
     const pc = createPeerConnection(
       get().setRemoteVideoStream,
@@ -191,8 +191,13 @@ export const useVideoCallStore = create((set, get) => ({
     const { socket } = useAuthStore.getState();
     const { callerInfo } = get();
 
-    if (callerInfo) {
+    if(callerInfo){
       socket.emit("end-call", { targetId: callerInfo.id });
+      return;
+    }
+
+    if (useChatStore.getState().selectedUser) {
+      socket.emit("end-call", { targetId: selectedUser.id });
     }
   },
 
