@@ -1,7 +1,7 @@
 import { Mic, MicOff, Video, VideoOff, PhoneOff } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-import DraggableVideo from "./Draggable";
+import DraggableVideo from "./DraggableVideo";
 
 // Stores
 import { useVideoCallStore } from "../../store/useVideoCallStore";
@@ -67,7 +67,7 @@ const VideoCallModal = () => {
           <video
             ref={localVideoRef}
             className="rounded-lg border-2 border-primary bg-base-100 object-cover scale-x-[-1] shadow-lg cursor-move
-               sm:w-48 sm:h-32 h-48 w-32"
+               sm:w-48 sm:h-32 h-45 w-32"
             autoPlay
             playsInline
             muted

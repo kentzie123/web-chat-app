@@ -12,7 +12,7 @@ export default function DraggableVideo({ children }) {
   );
 
   return (
-    <div ref={ref} className="absolute bottom-4 right-4 cursor-move touch-none">
+    <div ref={ref} className="absolute top-4 right-4 sm:bottom-4 cursor-move touch-none">
       {children}
     </div>
   );
