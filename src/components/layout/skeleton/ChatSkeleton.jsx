@@ -31,7 +31,7 @@ const ChatSkeleton = () => {
 
       {/* Messages container with scroll */}
       <div className="flex-1 p-3 space-y-5 overflow-y-auto max-h-[calc(100vh-14.7rem)]">
-        {Array(15)
+        {Array(10)
           .fill(null)
           .map((_, i) => (
             <ChatBubbleSkeleton key={i} isLeft={i % 2} />
