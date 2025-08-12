@@ -55,7 +55,7 @@ const Chat = () => {
     setLatestMessage(null);
   }, [latestMessage, selectedUserMessages]);
 
-  if(isMessagesLoading) {
+  if(!selectedUser || isMessagesLoading) {
     return <ChatSkeleton />;
   }
 
