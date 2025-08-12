@@ -1,13 +1,26 @@
 export function createPeerConnection(setRemoteVideoStream, myVideoStream) {
-  
   const iceServersConfig = {
-    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    iceServers: [
+      { urls: "stun:ss-turn1.xirsys.com" },
+      {
+        urls: [
+          "turn:ss-turn1.xirsys.com:80?transport=udp",
+          "turn:ss-turn1.xirsys.com:3478?transport=udp",
+          "turn:ss-turn1.xirsys.com:80?transport=tcp",
+          "turn:ss-turn1.xirsys.com:3478?transport=tcp",
+          "turns:ss-turn1.xirsys.com:443?transport=tcp",
+          "turns:ss-turn1.xirsys.com:5349?transport=tcp",
+        ],
+        username: "YOUR_XIRSYS_USERNAME",
+        credential: "YOUR_XIRSYS_CREDENTIAL",
+      },
+    ],
   };
+
   const pc = new RTCPeerConnection(iceServersConfig);
 
   pc.ontrack = (event) => {
-    const remoteStream = event.streams[0];
-    setRemoteVideoStream(remoteStream);
+    setRemoteVideoStream(event.streams[0]);
   };
 
   myVideoStream.getTracks().forEach((track) => pc.addTrack(track, myVideoStream));
