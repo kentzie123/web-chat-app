@@ -185,7 +185,6 @@ export const useVideoCallStore = create((set, get) => ({
   },
 
   handleEndCall: () => {
-    get().stopVideoCall();
 
     // Also notify the other user if you want (optional)
     const { socket } = useAuthStore.getState();
@@ -193,11 +192,13 @@ export const useVideoCallStore = create((set, get) => ({
 
     if(callerInfo){
       socket.emit("end-call", { targetId: callerInfo.id });
+      get().stopVideoCall();
       return;
     }
 
     if (useChatStore.getState().selectedUser) {
       socket.emit("end-call", { targetId: selectedUser.id });
+      get().stopVideoCall();
     }
   },
 
