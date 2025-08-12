@@ -70,14 +70,14 @@ const Chat = () => {
               src={selectedUser.profile_pic || "/default.png"}
               alt="profile"
             />
-            <div>
-              <div className="font-medium">{selectedUser.fullname}</div>
+            <div className="overflow-hidden">
+              <div className="font-medium line-clamp-1">{selectedUser.fullname}</div>
               <div className="text-base-content/60 text-sm">
                 {onlineUsers.includes(selectedUser.id) ? "Online" : "Offline"}
               </div>
             </div>
           </div>
-          <div>
+          <div className="flex">
             <button
               onClick={handleCallUser}
               type="button"
