@@ -14,9 +14,10 @@ export const useVideoCallStore = create((set, get) => ({
   callerInfo: null,
   isSomeoneCalling: false,
   myVideoStream: null,
+  remoteVideoStream: null,
   peerConnection: null,
   callerOffer: null,
-  remoteVideoStream: null,
+  
 
   setRemoteVideoStream: (remoteVideoStream) => {
     set({ remoteVideoStream });

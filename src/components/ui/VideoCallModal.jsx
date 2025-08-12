@@ -7,7 +7,7 @@ import DraggableVideo from "./Draggable";
 import { useVideoCallStore } from "../../store/useVideoCallStore";
 
 const VideoCallModal = () => {
-  const { setIsCalling, setMyVideoStream, remoteVideoStream, handleEndCall } =
+  const { setIsCalling, setMyVideoStream, remoteVideoStream, handleEndCall, myVideoStream } =
     useVideoCallStore();
   const localVideoRef = useRef(null);
   const streamRef = useRef(null); // for resetting the stream
@@ -17,25 +17,8 @@ const VideoCallModal = () => {
   const [isCamOn, setIsCamOn] = useState(true);
 
   useEffect(() => {
-    const startStream = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        streamRef.current = stream;
-
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-          setMyVideoStream(stream);
-        }
-
-      } catch (error) {
-        console.error("Error starting camera:", error);
-      }
-    };
-
-    startStream();
+    localVideoRef.current.srcObject = myVideoStream;
+    streamRef.current = myVideoStream;
 
     return () => {
       streamRef.current?.getTracks().forEach((track) => track.stop());
