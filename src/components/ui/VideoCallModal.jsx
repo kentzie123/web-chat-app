@@ -7,7 +7,7 @@ import DraggableVideo from "./Draggable";
 import { useVideoCallStore } from "../../store/useVideoCallStore";
 
 const VideoCallModal = () => {
-  const { setIsCalling, setMyVideoStream, remoteVideoStream } =
+  const { setIsCalling, setMyVideoStream, remoteVideoStream, handleEndCall } =
     useVideoCallStore();
   const localVideoRef = useRef(null);
   const streamRef = useRef(null); // for resetting the stream
@@ -63,10 +63,10 @@ const VideoCallModal = () => {
     setIsCamOn((prev) => !prev);
   };
 
-  const endCall = () => {
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    setIsCalling(false);
-  };
+  // const endCall = () => {
+  //   streamRef.current?.getTracks().forEach((track) => track.stop());
+  //   setIsCalling(false);
+  // };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/80 z-[100]">
@@ -116,7 +116,7 @@ const VideoCallModal = () => {
             )}
           </button>
           <button
-            onClick={endCall}
+            onClick={handleEndCall}
             type="button"
             className="btn btn-error btn-circle"
           >
