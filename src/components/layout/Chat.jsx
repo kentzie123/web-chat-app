@@ -71,7 +71,7 @@ const Chat = () => {
               alt="profile"
             />
             <div className="overflow-hidden">
-              <div className="font-medium line-clamp-1">{selectedUser.fullname}</div>
+              <div className="font-medium truncate md:whitespace-normal md:overflow-visible md:text-normal">{selectedUser.fullname}</div>
               <div className="text-base-content/60 text-sm">
                 {onlineUsers.includes(selectedUser.id) ? "Online" : "Offline"}
               </div>
