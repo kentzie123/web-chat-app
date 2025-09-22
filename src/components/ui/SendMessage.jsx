@@ -8,7 +8,7 @@ import { useRef } from "react";
 import { useChatStore } from "../../store/useChatStore";
 import { useAuthStore } from "../../store/useAuthStore";
 
-// Toast 
+// Toast
 import toast from "react-hot-toast";
 
 const SendMessage = () => {
@@ -16,14 +16,18 @@ const SendMessage = () => {
   const { sendMessage, selectedUser, message, setMessage } = useChatStore();
   const { authUser } = useAuthStore();
 
-
   const handleSelectImage = (imageFile) => {
     console.log(imageFile);
-    const supportedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const supportedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
 
-    if(!supportedTypes.includes(imageFile.type)){
-      console.log('image not supported');
-      
+    if (!supportedTypes.includes(imageFile.type)) {
+      console.log("image not supported");
+
       toast.error("File type not supported!");
       return;
     }
@@ -48,21 +52,21 @@ const SendMessage = () => {
     }
   };
 
+  const closeImagePreview = () => {
+    setMessage({ ...message, image: null });
+
+    // Reset file input so same file can be selected again
+    if (selectPic.current) {
+      selectPic.current.value = "";
+    }
+  };
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     sendMessage(message, selectedUser.id, authUser.id);
 
     // For clearing
     setMessage({ text: "", image: null });
-    if (selectPic.current) {
-      selectPic.current.value = "";
-    }
-  };
-
-  const closeImagePreview = () => {
-    setMessage({ ...message, image: null });
-
-    // Reset file input so same file can be selected again
     if (selectPic.current) {
       selectPic.current.value = "";
     }
